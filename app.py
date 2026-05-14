@@ -7,6 +7,7 @@ import re
 import json
 
 st.set_page_config(page_title="Pague Menos - Editor", page_icon="🛍️", layout="centered")
+st.logo("logo.jpg")
 
 LOGO_PATH = "logo.jpg"
 SEAL_PATH = "selo.png"
@@ -292,12 +293,8 @@ def create_product_image(product_img, rating, review_count):
 
 
 # --- Interface ---
-col_logo, col_title = st.columns([1, 6])
-with col_logo:
-    st.image("logo_transparent.png", width=80)
-with col_title:
-    st.title("Pague Menos - Editor de Fotos")
-    st.caption("Cole o link do Mercado Livre e baixe a foto pronta com sua marca.")
+st.title("Pague Menos - Editor de Fotos")
+st.caption("Cole o link do Mercado Livre e baixe a foto pronta com sua marca.")
 
 url = st.text_input("🔗 Link do produto (Mercado Livre / meli.la):", placeholder="https://meli.la/...")
 
