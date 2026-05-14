@@ -364,3 +364,6 @@ if url and st.button("🖼️ Gerar foto e texto"):
 
         except Exception as e:
             st.error(f"Erro: {e}")
+
+st.divider()
+st.caption("Desenvolvido por Marcos Dunker")
