@@ -46,13 +46,34 @@ def get_image_url(url):
     # 4. Amazon
     imgs = re.findall(r'https://m\.media-amazon\.com/images/I/[A-Za-z0-9%+_.-]+\.(?:jpg|jpeg|png|webp)', html)
     if imgs:
-        # Prefere imagens maiores (sem sufixo de tamanho)
         for img in imgs:
             if not re.search(r'_AC_|_SX|_SY|_CR|_UL|_SS|_SR', img):
                 return img
         return imgs[0]
 
     imgs = re.findall(r'https://images-na\.ssl-images-amazon\.com/images/I/[A-Za-z0-9%+_.-]+\.(?:jpg|jpeg|png)', html)
+    if imgs:
+        return imgs[0]
+
+    # 5. Shopee
+    imgs = re.findall(r'https://cf\.shopee\.com\.br/file/[A-Za-z0-9_-]+', html)
+    if imgs:
+        return imgs[0]
+
+    # 6. Magalu / Magazine Luiza
+    imgs = re.findall(r'https://a-static\.mlcdn\.com\.br/[^\s"\']+\.(?:jpg|jpeg|png|webp)', html)
+    if imgs:
+        return imgs[0]
+
+    # 7. Americanas / Submarino / Shoptime
+    imgs = re.findall(r'https://[^\s"\']*\.americanas\.com\.br/[^\s"\']+\.(?:jpg|jpeg|png)', html)
+    if not imgs:
+        imgs = re.findall(r'https://[^\s"\']*images[^\s"\']+\.(?:jpg|jpeg|png)', html)
+    if imgs:
+        return imgs[0]
+
+    # 8. AliExpress
+    imgs = re.findall(r'https://ae\d+\.alicdn\.com/kf/[^\s"\']+\.(?:jpg|jpeg|png|webp)', html)
     if imgs:
         return imgs[0]
 
@@ -312,7 +333,7 @@ with col_title:
     st.title("Pague Menos - Editor de Fotos")
     st.caption("Cole o link do Mercado Livre e baixe a foto pronta com sua marca.")
 
-url = st.text_input("🔗 Link do produto (Mercado Livre / Amazon):", placeholder="https://meli.la/... ou https://amzn.to/...")
+url = st.text_input("🔗 Link do produto:", placeholder="Mercado Livre, Amazon, Shopee, Magalu, Americanas, AliExpress...")
 
 col1, col2 = st.columns(2)
 with col1:
