@@ -134,6 +134,9 @@ def get_product_title(url):
             if m:
                 t = m.group(1).strip()
                 t = re.sub(r'\s*[\|\-–]\s*(Mercado Livre|Amazon\.com\.br|Amazon|Shopee|Magalu|Americanas).*$', '', t, flags=re.IGNORECASE)
+                t = re.sub(r'[\s,\-–|]+Tamanho\s*\S+', '', t, flags=re.IGNORECASE)
+                t = re.sub(r'[\s,\-–|]+Cor\s*\S+', '', t, flags=re.IGNORECASE)
+                t = re.sub(r'[\s,\-–|]+N[°º]?\s*\d+', '', t, flags=re.IGNORECASE)
                 return t.strip()
     except Exception:
         pass
