@@ -119,6 +119,27 @@ def download_image(url):
     return Image.open(BytesIO(r.content)).convert("RGB")
 
 
+def get_product_title(url):
+    try:
+        session = requests.Session()
+        session.headers.update(HEADERS)
+        r = session.get(url, timeout=15, allow_redirects=True)
+        html = r.text
+        for pattern in [
+            r'property=["\']og:title["\'][^>]+content=["\']([^"\']+)["\']',
+            r'content=["\']([^"\']+)["\'][^>]*property=["\']og:title["\']',
+            r'<title[^>]*>([^<|]+)',
+        ]:
+            m = re.search(pattern, html)
+            if m:
+                t = m.group(1).strip()
+                t = re.sub(r'\s*[\|\-–]\s*(Mercado Livre|Amazon\.com\.br|Amazon|Shopee|Magalu|Americanas).*$', '', t, flags=re.IGNORECASE)
+                return t.strip()
+    except Exception:
+        pass
+    return None
+
+
 def draw_stars(draw, x, y, rating, size=50, color=(255, 200, 0)):
     import math
     for i in range(5):
@@ -403,6 +424,11 @@ if url and st.button("🖼️ Gerar foto e texto"):
     with st.spinner("Buscando produto..."):
         try:
             img_url = get_image_url(url)
+
+            titulo_produto = get_product_title(url)
+            if titulo_produto:
+                st.info(f"📋 **Título do produto** (clique para copiar):")
+                st.code(titulo_produto, language=None)
 
             if not img_url:
                 st.error("Não encontrei imagem nesse link. Tente outro link do produto.")
