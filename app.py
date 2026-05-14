@@ -280,7 +280,7 @@ def create_product_image(product_img, rating, review_count):
         rating_str = f"{rating:.1f}"
         num_w = int(draw.textlength(rating_str, font=f_num))
         draw.text((bm + pad, mid_y - 55), rating_str, fill=(255, 200, 0), font=f_num)
-        draw_stars(draw, bm + pad + num_w + 25, mid_y - 38, rating, size=55)
+        draw_stars(draw, bm + pad + num_w + 25, mid_y - 45, rating, size=75)
 
         if review_count >= 1000:
             rv_str = f"{review_count / 1000:.1f}mil".replace(".0mil", "mil")
