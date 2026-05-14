@@ -307,8 +307,8 @@ def create_product_image(product_img, rating, review_count):
             f_av = get_font(28)
             rv_w = int(draw.textlength(rv_str, font=f_rv))
             av_w = int(draw.textlength("AVALIAÇÕES", font=f_av))
-            draw.text((W - bm - pad - rv_w, mid_y - 45), rv_str, fill="white", font=f_rv)
-            draw.text((W - bm - pad - av_w, mid_y + 18), "AVALIAÇÕES", fill="white", font=f_av)
+            draw.text((W - bm - pad - rv_w, mid_y - 45), rv_str, fill=(255, 200, 0), font=f_rv)
+            draw.text((W - bm - pad - av_w, mid_y + 18), "AVALIAÇÕES", fill=(255, 200, 0), font=f_av)
     else:
         f_sl = get_font(38, bold=True)
         sl_w = int(draw.textlength("CUPONS QUE FAZEM A DIFERENÇA!", font=f_sl))
