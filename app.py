@@ -7,7 +7,6 @@ import re
 import json
 
 st.set_page_config(page_title="Pague Menos - Editor", page_icon="🛍️", layout="centered")
-st.logo("logo.jpg")
 
 LOGO_PATH = "logo.jpg"
 SEAL_PATH = "selo.png"
