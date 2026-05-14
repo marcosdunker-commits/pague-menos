@@ -1,0 +1,6 @@
+@echo off
+echo Iniciando Pague Menos - Editor de Fotos...
+echo.
+echo Aguarde abrir no navegador...
+streamlit run "%~dp0app.py"
+pause
