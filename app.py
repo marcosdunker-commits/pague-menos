@@ -294,6 +294,12 @@ def create_product_image(product_img, rating, review_count):
 
 
 # --- Interface ---
+col_logo, col_mid, col_right = st.columns([1, 2, 1])
+with col_mid:
+    st.image("logo.jpg", use_container_width=True)
+
+st.divider()
+
 url = st.text_input("🔗 Link do produto (Mercado Livre / meli.la):", placeholder="https://meli.la/...")
 
 col1, col2 = st.columns(2)
