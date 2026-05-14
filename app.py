@@ -292,6 +292,9 @@ def create_product_image(product_img, rating, review_count):
 
 
 # --- Interface ---
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    st.image("logo_transparent.png", use_container_width=True)
 st.title("Pague Menos - Editor de Fotos")
 st.caption("Cole o link do Mercado Livre e baixe a foto pronta com sua marca.")
 
