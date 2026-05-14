@@ -71,7 +71,20 @@ def draw_stars(draw, x, y, rating, size=50, color=(255, 200, 0)):
 
 
 def get_font(size, bold=False):
-    candidates = ["arialbd.ttf", "arial.ttf"] if bold else ["arial.ttf", "arialbd.ttf"]
+    if bold:
+        candidates = [
+            "arialbd.ttf",
+            "arial.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        ]
+    else:
+        candidates = [
+            "arial.ttf",
+            "arialbd.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        ]
     for name in candidates:
         try:
             return ImageFont.truetype(name, size)
@@ -81,7 +94,14 @@ def get_font(size, bold=False):
 
 
 def get_font_italic(size):
-    for name in ["ariali.ttf", "Arial Italic.ttf", "arial.ttf"]:
+    candidates = [
+        "ariali.ttf",
+        "Arial Italic.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Italic.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        "arial.ttf",
+    ]
+    for name in candidates:
         try:
             return ImageFont.truetype(name, size)
         except Exception:
@@ -116,7 +136,7 @@ def remove_black_bg(img, threshold=40):
 
 
 def get_impact(size):
-    for name in ["impact.ttf", "Impact.ttf"]:
+    for name in ["impact.ttf", "Impact.ttf", "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"]:
         try:
             return ImageFont.truetype(name, size)
         except Exception:
