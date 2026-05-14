@@ -382,7 +382,7 @@ if 'titulo_val' not in st.session_state:
     st.session_state['titulo_val'] = ''
 
 st.caption("Atalhos para o título:")
-atalhos = ["OFERTA RELÂMPAGO", "SUPER OFERTA", "PREÇO IMPERDÍVEL", "OFERTA DO DIA", "IMPERDÍVEL"]
+atalhos = ["OFERTA RELÂMPAGO 🔥", "SUPER OFERTA 🔥", "PREÇO IMPERDÍVEL 🔥", "OFERTA DO DIA 🔥", "IMPERDÍVEL 🔥"]
 cols = st.columns(len(atalhos))
 for i, atalho in enumerate(atalhos):
     with cols[i]:
