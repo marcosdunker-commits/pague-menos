@@ -43,7 +43,19 @@ def get_image_url(url):
     if imgs:
         return imgs[0]
 
-    # 4. Amazon
+    # 4. Amazon — busca imagem principal via hiRes no JS da página
+    hires = re.findall(r'"hiRes"\s*:\s*"(https://m\.media-amazon\.com/images/I/[^"]+)"', html)
+    if hires:
+        return hires[0]
+
+    large = re.findall(r'"large"\s*:\s*"(https://m\.media-amazon\.com/images/I/[^"]+)"', html)
+    if large:
+        return large[0]
+
+    landing = re.search(r'"landingImageUrl"\s*:\s*"(https://m\.media-amazon\.com/images/I/[^"]+)"', html)
+    if landing:
+        return landing.group(1)
+
     imgs = re.findall(r'https://m\.media-amazon\.com/images/I/[A-Za-z0-9%+_.-]+\.(?:jpg|jpeg|png|webp)', html)
     if imgs:
         for img in imgs:
