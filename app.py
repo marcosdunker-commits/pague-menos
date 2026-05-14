@@ -378,7 +378,19 @@ with col2:
 st.divider()
 st.subheader("📝 Texto para o WhatsApp")
 
-titulo = st.text_input("🔥 Título chamativo:", placeholder="Ex: 50 UNIDADES PRA ORGANIZAR DE VEZ")
+if 'titulo_val' not in st.session_state:
+    st.session_state['titulo_val'] = ''
+
+st.caption("Atalhos para o título:")
+atalhos = ["OFERTA RELÂMPAGO", "SUPER OFERTA", "PREÇO IMPERDÍVEL", "OFERTA DO DIA", "IMPERDÍVEL"]
+cols = st.columns(len(atalhos))
+for i, atalho in enumerate(atalhos):
+    with cols[i]:
+        if st.button(atalho, use_container_width=True):
+            st.session_state['titulo_val'] = atalho
+            st.rerun()
+
+titulo = st.text_input("🔥 Título chamativo:", value=st.session_state['titulo_val'], placeholder="Ex: 50 UNIDADES PRA ORGANIZAR DE VEZ")
 produto = st.text_input("✅ Nome do produto:", placeholder="Ex: Kit 50 Cabides Veludo")
 
 col3, col4 = st.columns(2)
