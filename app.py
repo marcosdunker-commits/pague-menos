@@ -342,7 +342,7 @@ def create_product_image(product_img, rating, review_count):
         pass
 
     # Frase à esquerda
-    linha = "PAGUE MENOS CUPOM DE VERDADE"
+    linha = "CLICK NO LINK E APROVEITE SUA OFERTA"
     area_start = 15
     area_w = seal_zone_start - area_start - 10
     font_size = int(footer_h * 0.21)
@@ -354,7 +354,7 @@ def create_product_image(product_img, rating, review_count):
     txt_w = int(draw.textlength(linha, font=f2))
     txt_x = area_start + (area_w - txt_w) // 2
     txt_y = fy + (footer_h - font_size) // 2
-    draw.text((txt_x, txt_y), linha, font=f2, fill=(255, 255, 255), stroke_width=0)
+    draw.text((txt_x, txt_y), linha, font=f2, fill=(255, 200, 0), stroke_width=0)
 
     return canvas
 
