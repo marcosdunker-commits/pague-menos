@@ -23,10 +23,26 @@ HEADERS = {
 }
 
 
+def clean_amazon_url(url):
+    asin = re.search(r'/dp/([A-Z0-9]{10})', url)
+    if asin:
+        return f"https://www.amazon.com.br/dp/{asin.group(1)}"
+    return url
+
+
 def get_image_url(url):
     session = requests.Session()
     session.headers.update(HEADERS)
-    r = session.get(url, timeout=15, allow_redirects=True)
+
+    # Simplifica URL da Amazon para evitar bloqueio
+    if "amazon.com.br" in url or "amzn.to" in url:
+        r = session.get(url, timeout=15, allow_redirects=True)
+        clean = clean_amazon_url(r.url)
+        if clean != r.url:
+            r = session.get(clean, timeout=15, allow_redirects=True)
+    else:
+        r = session.get(url, timeout=15, allow_redirects=True)
+
     r.raise_for_status()
     html = r.text
 
