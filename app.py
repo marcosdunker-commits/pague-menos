@@ -30,22 +30,7 @@ def clean_amazon_url(url):
     return url
 
 
-def extract_title(html):
-    for pattern in [
-        r'property=["\']og:title["\'][^>]+content=["\']([^"\']+)["\']',
-        r'content=["\']([^"\']+)["\'][^>]*property=["\']og:title["\']',
-        r'<title[^>]*>([^<|]+)',
-    ]:
-        m = re.search(pattern, html)
-        if m:
-            title = m.group(1).strip()
-            # Remove sufixos comuns de sites
-            title = re.sub(r'\s*[\|\-–]\s*(Mercado Livre|Amazon|Shopee|Magalu|Magazine Luiza|Americanas).*$', '', title, flags=re.IGNORECASE)
-            return title.strip()
-    return None
-
-
-def get_product_info(url):
+def get_image_url(url):
     session = requests.Session()
     session.headers.update(HEADERS)
 
@@ -60,7 +45,6 @@ def get_product_info(url):
 
     r.raise_for_status()
     html = r.text
-    title = extract_title(html)
 
     # 1. og:image via regex (suporta qualquer ordem de atributos)
     og_match = re.search(r'property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', html)
@@ -69,65 +53,65 @@ def get_product_info(url):
     if og_match:
         val = og_match.group(1)
         if not val.startswith("data:"):
-            return val, title
+            return val
 
     # 2. Imagens mlstatic de alta qualidade (-O. ou -OO.)
     imgs = re.findall(r'https://http2\.mlstatic\.com/\S+?(?:-O\.webp|-OO\.webp|-O\.jpg|-O\.jpeg)', html)
     if imgs:
-        return imgs[0], title
+        return imgs[0]
 
     # 3. Qualquer imagem mlstatic
     imgs = re.findall(r'https://http2\.mlstatic\.com/\S+?\.(?:webp|jpg|jpeg)', html)
     if imgs:
-        return imgs[0], title
+        return imgs[0]
 
     # 4. Amazon — busca imagem principal via hiRes no JS da página
     hires = re.findall(r'"hiRes"\s*:\s*"(https://m\.media-amazon\.com/images/I/[^"]+)"', html)
     if hires:
-        return hires[0], title
+        return hires[0]
 
     large = re.findall(r'"large"\s*:\s*"(https://m\.media-amazon\.com/images/I/[^"]+)"', html)
     if large:
-        return large[0], title
+        return large[0]
 
     landing = re.search(r'"landingImageUrl"\s*:\s*"(https://m\.media-amazon\.com/images/I/[^"]+)"', html)
     if landing:
-        return landing.group(1), title
+        return landing.group(1)
 
     imgs = re.findall(r'https://m\.media-amazon\.com/images/I/[A-Za-z0-9%+_.-]+\.(?:jpg|jpeg|png|webp)', html)
     if imgs:
         for img in imgs:
             if not re.search(r'_AC_|_SX|_SY|_CR|_UL|_SS|_SR', img):
-                return img, title
-        return imgs[0], title
+                return img
+        return imgs[0]
 
     imgs = re.findall(r'https://images-na\.ssl-images-amazon\.com/images/I/[A-Za-z0-9%+_.-]+\.(?:jpg|jpeg|png)', html)
     if imgs:
-        return imgs[0], title
+        return imgs[0]
 
     # 5. Shopee
     imgs = re.findall(r'https://cf\.shopee\.com\.br/file/[A-Za-z0-9_-]+', html)
     if imgs:
-        return imgs[0], title
+        return imgs[0]
 
     # 6. Magalu / Magazine Luiza
     imgs = re.findall(r'https://a-static\.mlcdn\.com\.br/[^\s"\']+\.(?:jpg|jpeg|png|webp)', html)
     if imgs:
-        return imgs[0], title
+        return imgs[0]
 
     # 7. Americanas / Submarino / Shoptime
     imgs = re.findall(r'https://[^\s"\']*\.americanas\.com\.br/[^\s"\']+\.(?:jpg|jpeg|png)', html)
     if not imgs:
         imgs = re.findall(r'https://[^\s"\']*images[^\s"\']+\.(?:jpg|jpeg|png)', html)
     if imgs:
-        return imgs[0], title
+        return imgs[0]
 
     # 8. AliExpress
     imgs = re.findall(r'https://ae\d+\.alicdn\.com/kf/[^\s"\']+\.(?:jpg|jpeg|png|webp)', html)
     if imgs:
-        return imgs[0], title
+        return imgs[0]
 
-    return None, title
+    return None
 
 
 def download_image(url):
@@ -406,13 +390,10 @@ with col4:
 if url and st.button("🖼️ Gerar foto e texto"):
     with st.spinner("Buscando produto..."):
         try:
-            img_url, titulo_extraido = get_product_info(url)
+            img_url = get_image_url(url)
 
             if not img_url:
                 st.error("Não encontrei imagem nesse link. Tente outro link do produto.")
-
-            if titulo_extraido:
-                st.info(f"📋 Título do produto: **{titulo_extraido}**")
             else:
                 product_img = download_image(img_url)
                 result = create_product_image(product_img, rating, review_count)
