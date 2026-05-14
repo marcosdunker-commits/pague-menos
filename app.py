@@ -346,7 +346,7 @@ if url and st.button("🖼️ Gerar foto e texto"):
                 if produto:
                     partes.append(f"✅ {produto}")
                 if preco_de and preco_por:
-                    partes.append(f"💰 DE R$ {preco_de} | POR R$ *{preco_por}*")
+                    partes.append(f"💰 DE R$ ~{preco_de}~ | POR R$ *{preco_por}*")
                 elif preco_por:
                     partes.append(f"💰 POR R$ *{preco_por}*")
                 partes.append(f"🔗 {url}")
