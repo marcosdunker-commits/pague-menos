@@ -137,6 +137,9 @@ def get_product_title(url):
                 t = re.sub(r'[\s,\-–|]+Tamanho\s*\S+', '', t, flags=re.IGNORECASE)
                 t = re.sub(r'[\s,\-–|]+Cor\s*\S+', '', t, flags=re.IGNORECASE)
                 t = re.sub(r'[\s,\-–|]+N[°º]?\s*\d+', '', t, flags=re.IGNORECASE)
+                t = re.sub(r'\s+[A-Za-z]{3,}/[A-Za-z]{3,}\s+\d{2}\s*[Bb][Rr]\s*$', '', t)
+                t = re.sub(r'\s+\d{2}\s*[Bb][Rr]\s*$', '', t)
+                t = re.sub(r'\s+[A-Za-z]{3,}/[A-Za-z]{3,}\s*$', '', t)
                 return t.strip()
     except Exception:
         pass
