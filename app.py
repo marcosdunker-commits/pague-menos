@@ -302,7 +302,19 @@ with col1:
 with col2:
     review_count = st.number_input("💬 Nº de avaliações", min_value=0, value=0, step=1)
 
-if url and st.button("🖼️ Gerar foto"):
+st.divider()
+st.subheader("📝 Texto para o WhatsApp")
+
+titulo = st.text_input("🔥 Título chamativo:", placeholder="Ex: 50 UNIDADES PRA ORGANIZAR DE VEZ")
+produto = st.text_input("✅ Nome do produto:", placeholder="Ex: Kit 50 Cabides Veludo")
+
+col3, col4 = st.columns(2)
+with col3:
+    preco_de = st.text_input("Preço DE:", placeholder="Ex: 109,90")
+with col4:
+    preco_por = st.text_input("Preço POR:", placeholder="Ex: 56,84")
+
+if url and st.button("🖼️ Gerar foto e texto"):
     with st.spinner("Buscando produto..."):
         try:
             img_url = get_image_url(url)
@@ -326,5 +338,24 @@ if url and st.button("🖼️ Gerar foto"):
                     file_name="paguemenos_produto.jpg",
                     mime="image/jpeg",
                 )
+
+                # Texto para WhatsApp
+                partes = []
+                if titulo:
+                    partes.append(f"🔥 *{titulo.upper()}*")
+                if produto:
+                    partes.append(f"✅ {produto}")
+                if preco_de and preco_por:
+                    partes.append(f"💰 DE R$ {preco_de} | POR R$ *{preco_por}*")
+                elif preco_por:
+                    partes.append(f"💰 POR R$ *{preco_por}*")
+                partes.append(f"🔗 {url}")
+
+                texto = "\n\n".join(partes)
+
+                st.divider()
+                st.subheader("📋 Copie o texto abaixo:")
+                st.code(texto, language=None)
+
         except Exception as e:
             st.error(f"Erro: {e}")
