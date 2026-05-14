@@ -11,8 +11,6 @@ st.set_page_config(page_title="Pague Menos - Editor", page_icon="🛍️", layou
 LOGO_PATH = "logo.jpg"
 SEAL_PATH = "selo.png"
 
-st.title("Pague Menos - Editor de Fotos")
-st.caption("Cole o link do Mercado Livre e baixe a foto pronta com sua marca.")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
@@ -294,11 +292,12 @@ def create_product_image(product_img, rating, review_count):
 
 
 # --- Interface ---
-col_logo, col_mid, col_right = st.columns([1, 2, 1])
-with col_mid:
-    st.image("logo.jpg", use_container_width=True)
-
-st.divider()
+col_logo, col_title = st.columns([1, 6])
+with col_logo:
+    st.image("logo_transparent.png", width=80)
+with col_title:
+    st.title("Pague Menos - Editor de Fotos")
+    st.caption("Cole o link do Mercado Livre e baixe a foto pronta com sua marca.")
 
 url = st.text_input("🔗 Link do produto (Mercado Livre / meli.la):", placeholder="https://meli.la/...")
 
