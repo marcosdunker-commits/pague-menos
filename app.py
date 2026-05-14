@@ -30,23 +30,11 @@ def clean_amazon_url(url):
     return url
 
 
-def extract_title(html):
-    for pattern in [
-        r'property=["\']og:title["\'][^>]+content=["\']([^"\']+)["\']',
-        r'content=["\']([^"\']+)["\'][^>]*property=["\']og:title["\']',
-        r'<title[^>]*>([^<|]+)',
-    ]:
-        m = re.search(pattern, html)
-        if m:
-            t = m.group(1).strip()
-            t = re.sub(r'\s*[\|\-–]\s*(Mercado Livre|Amazon\.com\.br|Amazon|Shopee|Magalu|Magazine Luiza|Americanas).*$', '', t, flags=re.IGNORECASE)
-            return t.strip()
-    return None
-
-
-def get_product_info(url):
+def get_image_url(url):
     session = requests.Session()
     session.headers.update(HEADERS)
+
+    # Simplifica URL da Amazon para evitar bloqueio
     if "amazon.com.br" in url or "amzn.to" in url:
         r = session.get(url, timeout=15, allow_redirects=True)
         clean = clean_amazon_url(r.url)
@@ -54,14 +42,10 @@ def get_product_info(url):
             r = session.get(clean, timeout=15, allow_redirects=True)
     else:
         r = session.get(url, timeout=15, allow_redirects=True)
+
     r.raise_for_status()
     html = r.text
-    title = extract_title(html)
-    img_url = extract_image(html)
-    return img_url, title
 
-
-def extract_image(html):
     # 1. og:image via regex (suporta qualquer ordem de atributos)
     og_match = re.search(r'property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', html)
     if not og_match:
@@ -383,11 +367,6 @@ with col_title:
     st.title("Pague Menos - Editor de Fotos")
     st.caption("Cole o link do Mercado Livre e baixe a foto pronta com sua marca.")
 
-# Session state
-for k, v in [('produto_nome', ''), ('result_bytes', None), ('last_url', '')]:
-    if k not in st.session_state:
-        st.session_state[k] = v
-
 url = st.text_input("🔗 Link do produto:", placeholder="Mercado Livre, Amazon, Shopee, Magalu, Americanas, AliExpress...")
 
 col1, col2 = st.columns(2)
@@ -400,7 +379,7 @@ st.divider()
 st.subheader("📝 Texto para o WhatsApp")
 
 titulo = st.text_input("🔥 Título chamativo:", placeholder="Ex: 50 UNIDADES PRA ORGANIZAR DE VEZ")
-produto = st.text_input("✅ Nome do produto:", key='produto_nome', placeholder="Ex: Kit 50 Cabides Veludo")
+produto = st.text_input("✅ Nome do produto:", placeholder="Ex: Kit 50 Cabides Veludo")
 
 col3, col4 = st.columns(2)
 with col3:
@@ -411,51 +390,48 @@ with col4:
 if url and st.button("🖼️ Gerar foto e texto"):
     with st.spinner("Buscando produto..."):
         try:
-            img_url, titulo_extraido = get_product_info(url)
+            img_url = get_image_url(url)
 
             if not img_url:
                 st.error("Não encontrei imagem nesse link. Tente outro link do produto.")
             else:
                 product_img = download_image(img_url)
                 result = create_product_image(product_img, rating, review_count)
+
+                st.image(result, use_container_width=True)
+
                 buf = BytesIO()
                 result.save(buf, format="JPEG", quality=95)
-                st.session_state['result_bytes'] = buf.getvalue()
-                st.session_state['last_url'] = url
-                if titulo_extraido:
-                    st.session_state['produto_nome'] = titulo_extraido
-                st.rerun()
+                buf.seek(0)
+
+                st.success("Foto pronta!")
+                st.download_button(
+                    "⬇️ Baixar foto",
+                    buf,
+                    file_name="paguemenos_produto.jpg",
+                    mime="image/jpeg",
+                )
+
+                # Texto para WhatsApp
+                partes = []
+                if titulo:
+                    partes.append(f"🔥 *{titulo.upper()}*")
+                if produto:
+                    partes.append(f"✅ {produto}")
+                if preco_de and preco_por:
+                    partes.append(f"💰 DE R$ ~{preco_de}~ | *POR R$ {preco_por}*")
+                elif preco_por:
+                    partes.append(f"💰 *POR R$ {preco_por}*")
+                partes.append(f"🔗 {url}")
+
+                texto = "\n\n".join(partes)
+
+                st.divider()
+                st.subheader("📋 Copie o texto abaixo:")
+                st.code(texto, language=None)
 
         except Exception as e:
             st.error(f"Erro: {e}")
-
-# Exibe resultado
-if st.session_state['result_bytes']:
-    buf = BytesIO(st.session_state['result_bytes'])
-    st.image(Image.open(BytesIO(st.session_state['result_bytes'])), use_container_width=True)
-    st.success("Foto pronta!")
-    st.download_button(
-        "⬇️ Baixar foto",
-        BytesIO(st.session_state['result_bytes']),
-        file_name="paguemenos_produto.jpg",
-        mime="image/jpeg",
-    )
-
-    partes = []
-    if titulo:
-        partes.append(f"🔥 *{titulo.upper()}*")
-    produto_val = st.session_state.get('produto_nome', '')
-    if produto_val:
-        partes.append(f"✅ {produto_val}")
-    if preco_de and preco_por:
-        partes.append(f"💰 DE R$ ~{preco_de}~ | *POR R$ {preco_por}*")
-    elif preco_por:
-        partes.append(f"💰 *POR R$ {preco_por}*")
-    partes.append(f"🔗 {st.session_state['last_url']}")
-    texto = "\n\n".join(partes)
-    st.divider()
-    st.subheader("📋 Copie o texto abaixo:")
-    st.code(texto, language=None)
 
 st.divider()
 st.caption("Desenvolvido por Marcos Dunker")
