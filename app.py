@@ -16,11 +16,17 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     "Accept-Language": "pt-BR,pt;q=0.9",
+    "Accept-Encoding": "gzip, deflate",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Cache-Control": "max-age=0",
 }
 
 
 def get_image_url(url):
-    r = requests.get(url, headers=HEADERS, timeout=15, allow_redirects=True)
+    session = requests.Session()
+    session.headers.update(HEADERS)
+    r = session.get(url, timeout=15, allow_redirects=True)
     r.raise_for_status()
     html = r.text
 
